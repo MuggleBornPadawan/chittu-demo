@@ -32,12 +32,12 @@ jobs:
       - name: Build Web (Main Branch -> /)
         if: github.ref == 'refs/heads/main'
         working-directory: ./web
-        run: npx vite build --base=/ --outDir=../dist-main --emptyOutDir
+        run: npx vite build --base=./ --outDir=../dist-main --emptyOutDir
 
       - name: Build Web (Dev Branch -> /preview/)
         if: github.ref == 'refs/heads/dev'
         working-directory: ./web
-        run: npx vite build --base=/preview/ --outDir=../dist-preview --emptyOutDir
+        run: npx vite build --base=./ --outDir=../dist-preview --emptyOutDir
 
       - name: Enforce JS Dist Size Budget (<5MB)
         run: |
