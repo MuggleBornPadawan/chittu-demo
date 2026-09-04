@@ -1,4 +1,6 @@
-(ns art)
+(ns art
+  (:require [quil.core :as q]
+            [quil.middleware :as m]))
 
 (defn- int32 ^long [^long x]
   (unchecked-int x))
@@ -33,3 +35,66 @@
      :scales scales
      :paletteIdx palette-idx
      :lightAngle light-angle}))
+
+;; --- Quil 3D REPL Visualization ---
+
+(def palettes
+  {0 [255 255 255]   ; 0 = white
+   1 [0 0 0]         ; 1 = black
+   2 [128 128 128]}) ; 2 = mid-grey
+
+(defn setup-sketch [seed]
+  (fn []
+    (q/frame-rate 60)
+    (q/background 176 176 176) ; #B0B0B0 wall
+    (generate-static-params seed)))
+
+(defn draw-sketch [state]
+  (let [time (/ (q/millis) 1000.0)
+        rot-y (* time 0.5)
+        pulse (+ 1.0 (* 0.05 (Math/sin (* time 2.0))))
+        [r g b] (get palettes (:paletteIdx state) [255 255 255])
+        count-val (:count state)
+        twist (:twist state)
+        scales (:scales state)]
+
+    (q/background 176 176 176)
+    (q/lights)
+    (q/directional-light 255 255 255 0.5 1 1)
+
+    (q/push-matrix)
+    (q/translate (/ (q/width) 2.0) (/ (q/height) 2.0) 0)
+    (q/rotate-y rot-y)
+    (q/scale pulse)
+    (q/fill r g b)
+    (q/stroke 50)
+
+    (dotimes [i count-val]
+      (let [sc (get scales i 1.0)
+            angle (+ (* (/ (double i) count-val) Math/PI 2.0) twist)
+            radius 120.0
+            x (* (Math/cos angle) radius)
+            y (* (- i (/ count-val 2.0)) 25.0)
+            z (* (Math/sin angle) radius)]
+        (q/push-matrix)
+        (q/translate x y z)
+        (q/box (* sc 40.0))
+        (q/pop-matrix)))
+
+    (q/pop-matrix)))
+
+(defn run-lab-sketch
+  "Launch interactive Quil 3D REPL sketch for a target seed."
+  [seed]
+  (q/defsketch art-lab
+    :title (str "Virtual Museum Lab - Seed " seed)
+    :size [800 600]
+    :renderer :p3d
+    :setup (setup-sketch seed)
+    :draw draw-sketch
+    :middleware [m/fun-mode]))
+
+(defn -main [& args]
+  (let [seed (if (seq args) (Long/parseLong (first args)) 42)]
+    (println "Starting Quil 3D REPL sketch for seed:" seed)
+    (run-lab-sketch seed)))
