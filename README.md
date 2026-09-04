@@ -32,6 +32,32 @@ A web-based 3D virtual museum displaying deterministic generative art pieces. Bu
 
 ---
 
+## 🎨 Generative Artist Workflow
+
+```mermaid
+flowchart TD
+    A["1. Rapid 3D Prototyping in Clojure REPL (lab/)"] --> B["2. Test across fixed seeds (1, 42, 99)"]
+    B --> C["3. Port math formulas to TypeScript (web/src/art.ts)"]
+    C --> D["4. Push to dev branch for Stage Preview (/preview/)"]
+    D --> E["5. Merge dev -> main for Production Release (/)"]
+```
+
+1. **Rapid 3D Exploration (`lab/`)**:
+   - Run `clj -M -m art 42` inside `lab/` or evaluate functions in your Clojure REPL.
+   - Modify generative math in `lab/src/art.clj` (`generate-static-params`, rotational speeds, scale ranges, twist constants) with instant live visual feedback in the Quil P3D desktop window.
+2. **Seed Variety Verification**:
+   - Test your rules against fixed seeds `1`, `42`, `99` (`clj -M -m art 1`, `clj -M -m art 42`, `clj -M -m art 99`) to ensure mathematical rules generate cohesive yet distinct sculptures.
+3. **Port Math to TypeScript (`web/src/art.ts`)**:
+   - Port your updated generator logic into `generateStaticParams` in `web/src/art.ts`.
+   - Update `vectors.json` test vectors to maintain 100% test parity across Clojure and TypeScript.
+4. **Stage Preview (`dev` branch)**:
+   - Push your branch to `dev` (`git checkout dev && git merge main && git push origin dev`).
+   - Open `https://mugglebornpadawan.github.io/chittu-demo/preview/` on your phone or desktop to test the full virtual museum experience.
+5. **Production Release (`main` branch)**:
+   - Merge `dev` into `main` (`git checkout main && git merge dev && git push origin main`) to launch your updated exhibition to `https://mugglebornpadawan.github.io/chittu-demo/`.
+
+---
+
 ## 🛠️ Tech Stack & Architecture
 
 - **Web Frontend**: TypeScript + Three.js (core only, zero addons) + Vite.
