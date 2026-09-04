@@ -30,7 +30,7 @@ Why:
 - Zero server to run. Fast push.
 
 ## 4. Tour
-- Size: 8 rooms (range 6-10).
+- Size: default 8 rooms (allow 6-10 via config).
 - Nav: back / forth buttons + dots + room numbers + arrow keys + touch swipe.
 - Load: build only 3 rooms (current + next + prev). Lazy rest. Pause off-screen.
 - URL shares tour: `?tour=12,42,77&v=1&room=3`
