@@ -36,25 +36,47 @@ A web-based 3D virtual museum displaying deterministic generative art pieces. Bu
 
 ```mermaid
 flowchart TD
-    A["1. Rapid 3D Prototyping in Clojure REPL (lab/)"] --> B["2. Test across fixed seeds (1, 42, 99)"]
-    B --> C["3. Port math formulas to TypeScript (web/src/art.ts)"]
+    A["1. Prototyping in Clojure REPL (lab/)"] --> B["2. Port math to TypeScript & verify parity (web/)"]
+    B --> C["3. Local Build Preview (npm run preview)"]
     C --> D["4. Push to dev branch for Stage Preview (/preview/)"]
     D --> E["5. Merge dev -> main for Production Release (/)"]
 ```
 
-1. **Rapid 3D Exploration (`lab/`)**:
+1. **Rapid 3D Prototyping in Clojure (`lab/`)**:
    - Run `clj -M -m art 42` inside `lab/` or evaluate functions in your Clojure REPL.
    - Modify generative math in `lab/src/art.clj` (`generate-static-params`, rotational speeds, scale ranges, twist constants) with instant live visual feedback in the Quil P3D desktop window.
-2. **Seed Variety Verification**:
-   - Test your rules against fixed seeds `1`, `42`, `99` (`clj -M -m art 1`, `clj -M -m art 42`, `clj -M -m art 99`) to ensure mathematical rules generate cohesive yet distinct sculptures.
-3. **Port Math to TypeScript (`web/src/art.ts`)**:
+   - Test across reference seeds `1`, `42`, `99` to verify aesthetic variety.
+
+2. **Port Math & Parity Verification (`web/`)**:
    - Port your updated generator logic into `generateStaticParams` in `web/src/art.ts`.
-   - Update `vectors.json` test vectors to maintain 100% test parity across Clojure and TypeScript.
-4. **Stage Preview (`dev` branch)**:
-   - Push your branch to `dev` (`git checkout dev && git merge main && git push origin dev`).
-   - Open `https://mugglebornpadawan.github.io/chittu-demo/preview/` on your phone or desktop to test the full virtual museum experience.
+   - Run `npm test` in `web/` and `clj` tests in `lab/` to maintain 100% vector parity in `vectors.json`.
+
+3. **Local Production Build Preview**:
+   - Compile and inspect the bundle locally before pushing:
+     ```bash
+     cd web
+     npm run build
+     npm run preview
+     ```
+   - Open `http://localhost:4173/` to verify local production performance.
+
+4. **Online Stage Preview (`dev` branch)**:
+   - Push your branch to `dev`:
+     ```bash
+     git checkout dev
+     git merge main
+     git push origin dev
+     ```
+   - Test `https://mugglebornpadawan.github.io/chittu-demo/preview/` across real mobile and desktop browsers.
+
 5. **Production Release (`main` branch)**:
-   - Merge `dev` into `main` (`git checkout main && git merge dev && git push origin main`) to launch your updated exhibition to `https://mugglebornpadawan.github.io/chittu-demo/`.
+   - When happy with the preview stage, merge `dev` into `main` and push:
+     ```bash
+     git checkout main
+     git merge dev
+     git push origin main
+     ```
+   - Your updated 3D virtual museum exhibition is live at `https://mugglebornpadawan.github.io/chittu-demo/`!
 
 ---
 

@@ -1,9 +1,9 @@
-import test, { describe, it } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { mulberry32, generateRandomSeed } from '../src/rng.ts';
-import { generateStaticParams, draw, PALETTES } from '../src/art.ts';
+import { generateStaticParams, draw } from '../src/art.ts';
 
 const vectorsPath = join(import.meta.dirname, 'vectors.json');
 const vectors = JSON.parse(readFileSync(vectorsPath, 'utf8'));

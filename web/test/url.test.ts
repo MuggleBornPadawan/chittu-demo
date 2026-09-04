@@ -1,4 +1,4 @@
-import test, { describe, it } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { parseTourUrl, buildTourUrl } from '../src/url.ts';
 import { ROOM_COUNT, ART_VERSION } from '../src/config.ts';

@@ -1,4 +1,4 @@
-import test, { describe, it } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { UIController } from '../src/ui.ts';
 
@@ -13,10 +13,6 @@ if (typeof window === 'undefined') {
 if (typeof document === 'undefined') {
   (global as any).document = {
     createElement: () => {
-      const listeners: Record<string, Function[]> = {};
-      const attrs: Record<string, string> = {};
-      const children: any[] = [];
-
       const makeBtn = (id: string) => {
         const btnListeners: Record<string, Function[]> = {};
         const btn = {
@@ -44,7 +40,6 @@ if (typeof document === 'undefined') {
       const roomLabel = { textContent: '' };
       const dotTabs = Array.from({ length: 8 }, (_, i) => {
         const tab = makeBtn(`dot-${i}`);
-        tab.setAttribute('data-index', String(i));
         return tab;
       });
 
@@ -71,7 +66,6 @@ if (typeof document === 'undefined') {
 describe('UIController Navigation & Accessibility', () => {
   it('initializes and handles room navigation', () => {
     let changedRoom = -1;
-    let motionToggled = false;
 
     const mockContainer: any = {
       appendChild: () => {},
@@ -82,7 +76,7 @@ describe('UIController Navigation & Accessibility', () => {
       roomCount: 8,
       initialRoom: 0,
       onRoomChange: (idx) => { changedRoom = idx; },
-      onMotionToggle: (enabled) => { motionToggled = enabled; },
+      onMotionToggle: () => {},
     });
 
     assert.strictEqual(ui.isMotionEnabled, true);
