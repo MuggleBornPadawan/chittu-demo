@@ -1,0 +1,58 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Web Dependencies
+        working-directory: ./web
+        run: npm ci || npm install
+
+      - name: Run Web Tests
+        working-directory: ./web
+        run: npm test || node --experimental-strip-types test/art.test.ts
+
+      - name: Build Web (Main Branch -> /)
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./web
+        run: npx vite build --base=/ --outDir=../dist-main
+
+      - name: Build Web (Dev Branch -> /preview/)
+        if: github.ref == 'refs/heads/dev'
+        working-directory: ./web
+        run: npx vite build --base=/preview/ --outDir=../dist-preview
+
+      - name: Enforce JS Dist Size Budget (<5MB)
+        run: |
+          DIST_DIR=$([ "${{ github.ref }}" = "refs/heads/main" ] && echo "dist-main" || echo "dist-preview")
+          TOTAL_SIZE=$(du -cb $DIST_DIR/assets/*.js | tail -n 1 | cut -f 1)
+          MAX_SIZE=$((5 * 1024 * 1024))
+          echo "Total raw JS dist size: $TOTAL_SIZE bytes (Max budget: $MAX_SIZE bytes)"
+          if [ "$TOTAL_SIZE" -gt "$MAX_SIZE" ]; then
+            echo "Error: Dist JS size exceeds 5MB budget limit!"
+            exit 1
+          fi
+
+      - name: Deploy to GitHub Pages Branch (gh-pages)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ github.ref == 'refs/heads/main' && './dist-main' || './dist-preview' }}
+          destination_dir: ${{ github.ref == 'refs/heads/main' && '.' || 'preview' }}
