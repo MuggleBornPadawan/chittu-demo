@@ -32,51 +32,81 @@ A web-based 3D virtual museum displaying deterministic generative art pieces. Bu
 
 ---
 
-## 🎨 Generative Artist Workflow
+## 🎨 Beginner-Friendly Generative Artist Workflow
+
+If you are new to this repo, here is how you design, test, and publish new 3D generative art step-by-step!
+
+### 💡 Understanding the Two Folders
+* 🧪 **`lab/` (The Art Sandbox)**: An interactive 3D desktop window where you play with shapes, colors, and math formulas using Clojure.
+* 🌐 **`web/` (The Main Website)**: The actual website built with TypeScript & Three.js that visitors see in their web browsers.
+
+---
 
 ```mermaid
 flowchart TD
-    A["1. Prototyping in Clojure REPL (lab/)"] --> B["2. Port math to TypeScript & verify parity (web/)"]
-    B --> C["3. Local Build Preview (npm run preview)"]
-    C --> D["4. Push to dev branch for Stage Preview (/preview/)"]
-    D --> E["5. Merge dev -> main for Production Release (/)"]
+    A["1. Design 3D art formula in lab/"] --> B["2. Copy math formula into web/src/art.ts"]
+    B --> C["3. Test locally in browser (npm run dev)"]
+    C --> D["4. Push to dev branch for Stage Preview"]
+    D --> E["5. Merge dev -> main to Publish Live!"]
 ```
 
-1. **Rapid 3D Prototyping in Clojure (`lab/`)**:
-   - Run `clj -M -m art 42` inside `lab/` or evaluate functions in your Clojure REPL.
-   - Modify generative math in `lab/src/art.clj` (`generate-static-params`, rotational speeds, scale ranges, twist constants) with instant live visual feedback in the Quil P3D desktop window.
-   - Test across reference seeds `1`, `42`, `99` to verify aesthetic variety.
+### 1️⃣ Step 1: Experiment with 3D Art in the Sandbox (`lab/`)
+* **What you're doing:** Tweaking numbers to see instant 3D art changes in a popup desktop window.
+* **Commands to run:**
+  ```bash
+  cd lab
+  clj -M -m art 42
+  ```
+* **How to change the art:** Open `lab/src/art.clj` and adjust rotational speeds, twist values, or scale ranges. A desktop window will pop up showing the generated 3D piece for seed `42` (you can also try seed `1` or `99`).
 
-2. **Port Math & Parity Verification (`web/`)**:
-   - Port your updated generator logic into `generateStaticParams` in `web/src/art.ts`.
-   - Run `npm test` in `web/` and `clj` tests in `lab/` to maintain 100% vector parity in `vectors.json`.
+---
 
-3. **Local Production Build Preview**:
-   - Compile and inspect the bundle locally before pushing:
-     ```bash
-     cd web
-     npm run build
-     npm run preview
-     ```
-   - Open `http://localhost:4173/` to verify local production performance.
+### 2️⃣ Step 2: Copy your Math to the Web App (`web/`)
+* **What you're doing:** Porting your math formulas from Clojure (`lab/`) into TypeScript (`web/`) so the web browser renders the exact same art.
+* **Where to edit:** Open `web/src/art.ts` and update the `generateStaticParams` function with your updated values.
+* **Check math parity:** Run the test command to verify that the lab and web app produce bitwise-identical numbers:
+  ```bash
+  cd web
+  npm test
+  ```
 
-4. **Online Stage Preview (`dev` branch)**:
-   - Push your branch to `dev`:
-     ```bash
-     git checkout dev
-     git merge main
-     git push origin dev
-     ```
-   - Test `https://mugglebornpadawan.github.io/chittu-demo/preview/` across real mobile and desktop browsers.
+---
 
-5. **Production Release (`main` branch)**:
-   - When happy with the preview stage, merge `dev` into `main` and push:
-     ```bash
-     git checkout main
-     git merge dev
-     git push origin main
-     ```
-   - Your updated 3D virtual museum exhibition is live at `https://mugglebornpadawan.github.io/chittu-demo/`!
+### 3️⃣ Step 3: Test Local Website in Browser (`web/`)
+* **What you're doing:** Previewing your new 3D museum exhibition locally on your computer.
+* **Commands to run:**
+  ```bash
+  cd web
+  npm run dev
+  ```
+* Open `http://localhost:5173/` in your browser to walk through gallery rooms and inspect the art.
+
+---
+
+### 4️⃣ Step 4: Share a Stage Preview (`dev` branch)
+* **What you're doing:** Publishing a temporary preview link to test on mobile devices or share with teammates.
+* **Commands to run:**
+  ```bash
+  git checkout dev
+  git add .
+  git commit -m "Update generative art formula"
+  git push origin dev
+  ```
+* GitHub Actions will automatically update the online preview page at:  
+  👉 **[https://mugglebornpadawan.github.io/chittu-demo/preview/](https://mugglebornpadawan.github.io/chittu-demo/preview/)**
+
+---
+
+### 5️⃣ Step 5: Publish Live to Production (`main` branch)
+* **What you're doing:** Publishing your finished 3D virtual museum exhibition to the main website for everyone!
+* **Commands to run:**
+  ```bash
+  git checkout main
+  git merge dev
+  git push origin main
+  ```
+* Your updated exhibition is now live at:  
+  👉 **[https://mugglebornpadawan.github.io/chittu-demo/](https://mugglebornpadawan.github.io/chittu-demo/)**
 
 ---
 
@@ -102,7 +132,12 @@ flowchart TD
 │   │   ├── url.ts            # Query parameter state parser & generator
 │   │   ├── config.ts         # Museum tour configuration constants
 │   │   └── main.ts           # Application entry point & WebGL fallback initialization
-│   ├── test/                 # Vitest / Node test runner specifications & vectors.json
+│   ├── test/                 # Node test runner specs & frozen test vectors
+│   │   ├── art.test.ts       # Generator static params & transform unit tests
+│   │   ├── museum.test.ts    # Gallery scene & 3-room manager unit tests
+│   │   ├── ui.test.ts        # Navigation UI & accessibility unit tests
+│   │   ├── url.test.ts       # Query parameter state parser unit tests
+│   │   └── vectors.json      # Frozen test vectors for PRNG & static params
 │   └── index.html            # Vite HTML entry point
 │
 ├── lab/                      # Clojure REPL art lab (Quil Processing)
@@ -164,7 +199,7 @@ npm test
 ```bash
 npm run build
 ```
-Compiles TypeScript and bundles production assets into `../dist-main/`.
+Compiles TypeScript and bundles production assets into `web/dist/` (or `../dist-main/` when building with CI flags).
 
 #### Step E (Optional): Inspect Production & Stage Builds Locally
 - **Inspect Production Bundle (`/` base)**:
