@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --emptyOutDir",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "node --experimental-strip-types test/art.test.ts && node --experimental-strip-types test/museum.test.ts && node --experimental-strip-types test/url.test.ts && node --experimental-strip-types test/ui.test.ts"
   },
   "dependencies": {
     "three": "^0.170.0"
